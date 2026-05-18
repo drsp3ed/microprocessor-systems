@@ -1,13 +1,5 @@
 uint8_t nums[] = {85, 170, 255};
 
-void SPI_init()
-{
-  DDRB |= (1 << PB3) | (1 << PB5) | (1 << PB2); // MOSI, SS, SCK
-  DDRB &= ~(1 << PB4); // MISO
-
-  SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0);
-}
-
 void SPI_send(uint8_t data)
 {
   SPDR = data;
@@ -16,8 +8,13 @@ void SPI_send(uint8_t data)
 }
 
 void setup() {
-  SPI_init();
+  DDRB |= (1 << PB3) | (1 << PB5) | (1 << PB2); // MOSI, SCK, SS
+  DDRB &= ~(1 << PB4); // MISO
 
+  SPCR = 0;
+  //     Enable SPI | Set to Master | Set SCK to /16
+  SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0);
+  SPSR &= ~(1 << SPI2X); // disable frequency doubling
 }
 
 void loop() {
@@ -26,6 +23,6 @@ void loop() {
     PORTB &= ~(1 << PB2);
     SPI_send(nums[i]);
     PORTB |= (1 << PB2);
-    delay(500);
+    delay(1000);
   }
 }

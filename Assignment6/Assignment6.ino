@@ -1,6 +1,7 @@
 volatile bool pause = false; // button press indicator
 volatile uint8_t i = 0; // counter
 volatile unsigned long lastPressTime = 0;
+volatile uint16_t lastTimer;
 // decimal values:                 0     1     2     3     4     5     6     7     8     9
 volatile uint8_t seg_table[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};
 void setup() 
@@ -38,6 +39,12 @@ ISR(TIMER1_COMPA_vect)
 ISR(PCINT0_vect) {
   if (!(PINB & (1 << PB0))) {
     if ((millis() - lastPressTime) > 50) {
+      if (pause) {
+        lastTimer = TCNT1;
+      }
+      else {
+        TCNT1 = lastTimer;
+      }
       pause = !pause;
       lastPressTime = millis();
     }

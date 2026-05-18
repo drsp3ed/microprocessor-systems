@@ -49,12 +49,14 @@ uint8_t request_from_slave() {
 
 void setup() {
     TWSR = 0x00; // prescaler 1
-    TWBR = 72; // with prescaler 1, SCL frequency is 100kHz
+    TWBR = 72; // with prescaler 1, SCL frequency is 100kHz (12 for 400kHz)
     TWCR = (1 << TWEN); // enable I2C
 
     PORTC |= (1 << PC4) | (1 << PC5); // enable pull-ups on SDA and SCL
 
     DDRB |= (1 << PB5); // use onboard LED
+    DDRB |= (1 << PB0);
+    PORTB |= (1 << PB0);
     DDRD &= ~(1 << PD2); // button (PD0 and PD1 are reseved for RX and TX)
     PORTD |= (1 << PD2);
 }
